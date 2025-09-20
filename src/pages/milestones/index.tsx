@@ -1,25 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { IMilestone } from "../../@types/Milestone";
 import MilestoneCard from "../../components/features/milestones/MilestoneCard";
 import UpsertMilestoneModal from "../../components/features/milestones/UpsertMilestoneModal";
 import { useMilestones } from "../../hooks/useMilestones";
 
 export default function MilestonesPage() {
-  const { milestones, loading, error } = useMilestones();
+  const { milestones, loading, error, fetchMilestones } = useMilestones();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedMilestone, setSelectedMilestone] = useState<IMilestone | null>(
     null
   );
 
-  function handleClose() {
+  function onSaveMilestoneSuccess() {
     setIsModalOpen(false);
+    setSelectedMilestone(null);
+    fetchMilestones();
   }
 
   function onEditMilestone(milestone: IMilestone) {
     setSelectedMilestone(milestone);
     setIsModalOpen(true);
   }
+
+  useEffect(() => {
+    fetchMilestones();
+  }, [fetchMilestones]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -43,9 +49,11 @@ export default function MilestonesPage() {
       </div>
 
       <UpsertMilestoneModal
-        handleClose={handleClose}
         isOpen={isModalOpen}
         selectedMilestone={selectedMilestone}
+        onSuccess={onSaveMilestoneSuccess}
+        setIsOpen={setIsModalOpen}
+        setSelectedMilestone={setSelectedMilestone}
       />
 
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-3 lg:grid-cols-4">

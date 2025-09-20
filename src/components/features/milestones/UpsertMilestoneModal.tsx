@@ -1,11 +1,14 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import type { IMilestone } from "../../../@types/Milestone";
+import { useMilestones } from "../../../hooks/useMilestones";
 
 interface Props {
   isOpen: boolean;
   selectedMilestone: IMilestone | null;
-  handleClose: () => void;
+  setIsOpen: (val: boolean) => void;
+  onSuccess: () => void;
+  setSelectedMilestone: (milestone: IMilestone | null) => void;
 }
 
 const MilestoneSchema = Yup.object().shape({
@@ -15,18 +18,30 @@ const MilestoneSchema = Yup.object().shape({
 
 export default function UpsertMilestoneModal({
   isOpen,
-  handleClose,
   selectedMilestone,
+  onSuccess,
+  setIsOpen,
+  setSelectedMilestone,
 }: Props) {
+  const { upsertMilestone } = useMilestones();
   if (!isOpen) return null;
 
-  function onSubmit(values: { title: string; dueDate: string }) {
-    console.log("Form submitted with values:", values);
+  async function onSubmit(values: { title: string; dueDate: string }) {
+    await upsertMilestone({
+      id: selectedMilestone ? selectedMilestone.id : 0,
+      title: values.title,
+      dueDate: values.dueDate,
+      status: selectedMilestone ? selectedMilestone.status : "Pending",
+    });
 
-    //API call here TODO
-
-    handleClose();
+    onSuccess();
   }
+
+  function handleClose() {
+    setIsOpen(false);
+    setSelectedMilestone(null);
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">

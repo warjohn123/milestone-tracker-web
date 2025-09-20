@@ -4,8 +4,19 @@ import UpsertMilestoneModal from "../UpsertMilestoneModal";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import type { IMilestone } from "../../../../@types/Milestone";
 
+// Mock the useMilestones hook
+vi.mock("../../../../hooks/useMilestones", () => ({
+  useMilestones: () => ({
+    upsertMilestone: mockUpsertMilestone,
+  }),
+}));
+
+const mockUpsertMilestone = vi.fn();
+
 describe("UpsertMilestoneModal", () => {
-  const mockHandleClose = vi.fn();
+  const mockSetIsOpen = vi.fn();
+  const mockOnSuccess = vi.fn();
+  const mockSetSelectedMilestone = vi.fn();
 
   const sampleMilestone: IMilestone = {
     id: 1,
@@ -15,15 +26,26 @@ describe("UpsertMilestoneModal", () => {
   };
 
   beforeEach(() => {
-    mockHandleClose.mockClear();
+    mockSetIsOpen.mockClear();
+    mockOnSuccess.mockClear();
+    mockSetSelectedMilestone.mockClear();
+    mockUpsertMilestone.mockClear();
+    mockUpsertMilestone.mockResolvedValue({
+      id: 1,
+      title: "Test",
+      dueDate: "2025-12-31",
+      status: "Pending",
+    });
   });
 
   it("does not render when isOpen is false", () => {
     render(
       <UpsertMilestoneModal
         isOpen={false}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
     expect(screen.queryByText("Create Milestone")).not.toBeInTheDocument();
@@ -33,8 +55,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
     expect(screen.getByText("Create Milestone")).toBeInTheDocument();
@@ -44,19 +68,22 @@ describe("UpsertMilestoneModal", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
-  it("calls handleClose when cancel button is clicked", async () => {
+  it("calls setIsOpen and setSelectedMilestone when cancel button is clicked", async () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
     const cancelButton = screen.getByRole("button", { name: "Cancel" });
     fireEvent.click(cancelButton);
 
-    expect(mockHandleClose).toHaveBeenCalledTimes(1);
+    expect(mockSetIsOpen).toHaveBeenCalledWith(false);
+    expect(mockSetSelectedMilestone).toHaveBeenCalledWith(null);
   });
 
   it("shows validation errors for empty fields", async () => {
@@ -64,8 +91,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -83,8 +112,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -104,8 +135,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -120,15 +153,16 @@ describe("UpsertMilestoneModal", () => {
     });
   });
 
-  it("submits form with valid data and closes modal", async () => {
+  it("submits form with valid data and calls upsertMilestone and onSuccess", async () => {
     const user = userEvent.setup();
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -142,25 +176,26 @@ describe("UpsertMilestoneModal", () => {
     await user.click(saveButton);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith("Form submitted with values:", {
+      expect(mockUpsertMilestone).toHaveBeenCalledWith({
+        id: 0,
         title: "Test Milestone",
         dueDate: "2025-12-31",
+        status: "Pending",
       });
-      expect(mockHandleClose).toHaveBeenCalledTimes(1);
+      expect(mockOnSuccess).toHaveBeenCalledTimes(1);
     });
-
-    consoleSpy.mockRestore();
   });
 
   it("resets form after successful submission", async () => {
     const user = userEvent.setup();
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -177,16 +212,16 @@ describe("UpsertMilestoneModal", () => {
       expect(titleInput).toHaveValue("");
       expect(dueDateInput).toHaveValue("");
     });
-
-    consoleSpy.mockRestore();
   });
 
   it("has correct placeholder text for title input", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -199,8 +234,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={sampleMilestone}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -215,8 +252,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -227,8 +266,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={sampleMilestone}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -238,13 +279,14 @@ describe("UpsertMilestoneModal", () => {
 
   it("submits edited milestone data correctly", async () => {
     const user = userEvent.setup();
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={sampleMilestone}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -261,14 +303,14 @@ describe("UpsertMilestoneModal", () => {
     await user.click(saveButton);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith("Form submitted with values:", {
+      expect(mockUpsertMilestone).toHaveBeenCalledWith({
+        id: 1,
         title: "Updated Milestone",
         dueDate: "2026-01-15",
+        status: "Pending",
       });
-      expect(mockHandleClose).toHaveBeenCalledTimes(1);
+      expect(mockOnSuccess).toHaveBeenCalledTimes(1);
     });
-
-    consoleSpy.mockRestore();
   });
 
   it("handles keyboard navigation correctly", async () => {
@@ -276,8 +318,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -297,8 +341,10 @@ describe("UpsertMilestoneModal", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
-        handleClose={mockHandleClose}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
         selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
       />
     );
 
@@ -313,5 +359,61 @@ describe("UpsertMilestoneModal", () => {
 
     // Note: In a real scenario, you might need to mock a slow async operation
     // to properly test the disabled state during submission
+  });
+
+  it("calls upsertMilestone with correct parameters for new milestone", async () => {
+    const user = userEvent.setup();
+    render(
+      <UpsertMilestoneModal
+        isOpen={true}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
+        selectedMilestone={null}
+        setSelectedMilestone={mockSetSelectedMilestone}
+      />
+    );
+
+    const titleInput = screen.getByLabelText("Title");
+    const dueDateInput = screen.getByLabelText("Due Date");
+
+    await user.type(titleInput, "New Milestone");
+    await user.type(dueDateInput, "2025-11-30");
+
+    const saveButton = screen.getByRole("button", { name: "Save" });
+    await user.click(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpsertMilestone).toHaveBeenCalledWith({
+        id: 0, // New milestone should have id: 0
+        title: "New Milestone",
+        dueDate: "2025-11-30",
+        status: "Pending", // Default status for new milestone
+      });
+    });
+  });
+
+  it("calls upsertMilestone with correct parameters for existing milestone", async () => {
+    const user = userEvent.setup();
+    render(
+      <UpsertMilestoneModal
+        isOpen={true}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
+        selectedMilestone={sampleMilestone}
+        setSelectedMilestone={mockSetSelectedMilestone}
+      />
+    );
+
+    const saveButton = screen.getByRole("button", { name: "Save" });
+    await user.click(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpsertMilestone).toHaveBeenCalledWith({
+        id: 1, // Existing milestone should keep its id
+        title: "Test Milestone",
+        dueDate: "2025-12-31",
+        status: "Pending", // Should preserve existing status
+      });
+    });
   });
 });
