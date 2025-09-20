@@ -1,16 +1,10 @@
 import { useCallback, useState } from "react";
-
-export interface Milestone {
-  id: number;
-  title: string;
-  dueDate: string;
-  status: string;
-}
+import type { IMilestone } from "../@types/Milestone";
 
 const API_URL = "http://localhost:8000";
 
 export function useMilestones() {
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [milestones, setMilestones] = useState<IMilestone[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,12 +25,14 @@ export function useMilestones() {
     }
   }, []);
 
-  async function upsertMilestone(milestone: Milestone) {
+  async function upsertMilestone(milestone: IMilestone) {
     const isUpdate = !!milestone.id;
     const url = isUpdate
       ? `${API_URL}/milestones/${milestone.id}`
       : `${API_URL}/milestones`;
     const method = isUpdate ? "PUT" : "POST";
+
+    console.log("milestone", milestone);
 
     const res = await fetch(url, {
       method,
@@ -49,6 +45,8 @@ export function useMilestones() {
 
     const saved = await res.json();
 
+    console.log("saved", saved);
+
     // update local state
     setMilestones((prev) => {
       if (isUpdate) {
@@ -60,8 +58,6 @@ export function useMilestones() {
 
     return saved;
   }
-
-  console.log("milestones", milestones);
 
   return { milestones, loading, error, fetchMilestones, upsertMilestone };
 }

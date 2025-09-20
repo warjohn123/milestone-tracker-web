@@ -3,9 +3,11 @@ import type { IMilestone } from "../../@types/Milestone";
 import MilestoneCard from "../../components/features/milestones/MilestoneCard";
 import UpsertMilestoneModal from "../../components/features/milestones/UpsertMilestoneModal";
 import { useMilestones } from "../../hooks/useMilestones";
+import type { MilestoneStatus } from "../../enums/MilestoneStatus";
 
 export default function MilestonesPage() {
-  const { milestones, loading, error, fetchMilestones } = useMilestones();
+  const { milestones, loading, error, fetchMilestones, upsertMilestone } =
+    useMilestones();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedMilestone, setSelectedMilestone] = useState<IMilestone | null>(
@@ -21,6 +23,13 @@ export default function MilestonesPage() {
   function onEditMilestone(milestone: IMilestone) {
     setSelectedMilestone(milestone);
     setIsModalOpen(true);
+  }
+
+  async function onToggleStatus(id: string, status: MilestoneStatus) {
+    const milestone = milestones.find((m) => m.id === id);
+    if (!milestone) return;
+    await upsertMilestone({ ...milestone, status });
+    fetchMilestones();
   }
 
   useEffect(() => {
@@ -59,11 +68,12 @@ export default function MilestonesPage() {
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-3 lg:grid-cols-4">
         {milestones.map((m, index) => (
           <MilestoneCard
-            id={m.id}
+            id={m.id!}
             key={index}
             title={m.title}
             dueDate={m.dueDate}
             status={m.status}
+            onToggleStatus={onToggleStatus}
             onEditMilestone={onEditMilestone}
           />
         ))}

@@ -1,7 +1,7 @@
 import type { MilestoneStatus } from "../enums/MilestoneStatus";
 
 export interface IMilestone {
-  id: number;
+  id?: string;
   title: string;
   dueDate: string;
   status: MilestoneStatus;

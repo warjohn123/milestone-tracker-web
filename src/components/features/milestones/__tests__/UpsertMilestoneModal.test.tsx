@@ -4,7 +4,6 @@ import UpsertMilestoneModal from "../UpsertMilestoneModal";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import type { IMilestone } from "../../../../@types/Milestone";
 
-// Mock the useMilestones hook
 vi.mock("../../../../hooks/useMilestones", () => ({
   useMilestones: () => ({
     upsertMilestone: mockUpsertMilestone,
@@ -19,7 +18,7 @@ describe("UpsertMilestoneModal", () => {
   const mockSetSelectedMilestone = vi.fn();
 
   const sampleMilestone: IMilestone = {
-    id: 1,
+    id: "1",
     title: "Test Milestone",
     dueDate: "2025-12-31",
     status: "Pending",
@@ -177,7 +176,7 @@ describe("UpsertMilestoneModal", () => {
 
     await waitFor(() => {
       expect(mockUpsertMilestone).toHaveBeenCalledWith({
-        id: 0,
+        id: undefined,
         title: "Test Milestone",
         dueDate: "2025-12-31",
         status: "Pending",
@@ -288,7 +287,7 @@ describe("UpsertMilestoneModal", () => {
 
     await waitFor(() => {
       expect(mockUpsertMilestone).toHaveBeenCalledWith({
-        id: 1,
+        id: "1",
         title: "Updated Milestone",
         dueDate: "2026-01-15",
         status: "Pending",
@@ -342,7 +341,7 @@ describe("UpsertMilestoneModal", () => {
 
     await waitFor(() => {
       expect(mockUpsertMilestone).toHaveBeenCalledWith({
-        id: 0, // New milestone should have id: 0
+        id: undefined,
         title: "New Milestone",
         dueDate: "2025-11-30",
         status: "Pending", // Default status for new milestone
@@ -367,7 +366,7 @@ describe("UpsertMilestoneModal", () => {
 
     await waitFor(() => {
       expect(mockUpsertMilestone).toHaveBeenCalledWith({
-        id: 1, // Existing milestone should keep its id
+        id: "1", // Existing milestone should keep its id
         title: "Test Milestone",
         dueDate: "2025-12-31",
         status: "Pending", // Should preserve existing status

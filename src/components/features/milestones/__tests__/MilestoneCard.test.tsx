@@ -6,16 +6,17 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 
 describe("MilestoneCard", () => {
   const mockOnEditMilestone = vi.fn();
+  const mockOnToggleStatus = vi.fn();
 
   const pendingMilestone: IMilestone = {
-    id: 1,
+    id: "1",
     title: "Test Milestone",
     dueDate: "2025-09-30",
     status: "Pending",
   };
 
   const completedMilestone: IMilestone = {
-    id: 2,
+    id: "2",
     title: "Completed Task",
     dueDate: "2025-08-15",
     status: "Completed",
@@ -23,6 +24,7 @@ describe("MilestoneCard", () => {
 
   beforeEach(() => {
     mockOnEditMilestone.mockClear();
+    mockOnToggleStatus.mockClear();
   });
 
   it("renders milestone title, due date, and status", () => {
@@ -30,6 +32,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
     expect(screen.getByText("Test Milestone")).toBeInTheDocument();
@@ -42,6 +45,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...completedMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
     expect(screen.getByText("Completed Task")).toBeInTheDocument();
@@ -54,6 +58,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
     const editButton = screen.getByLabelText("Edit milestone");
@@ -66,6 +71,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -82,6 +88,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...completedMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -97,6 +104,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -124,6 +132,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -140,6 +149,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -152,6 +162,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -173,6 +184,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -190,7 +202,7 @@ describe("MilestoneCard", () => {
 
   it("renders with long title without breaking layout", () => {
     const longTitleMilestone: IMilestone = {
-      id: 3,
+      id: "3",
       title:
         "This is a very long milestone title that should still render properly without breaking the card layout",
       dueDate: "2025-12-25",
@@ -201,6 +213,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...longTitleMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -210,14 +223,18 @@ describe("MilestoneCard", () => {
 
   it("handles different date formats correctly", () => {
     const milestone: IMilestone = {
-      id: 4,
+      id: "4",
       title: "Date Test",
       dueDate: "2025-01-01",
       status: "Completed",
     };
 
     render(
-      <MilestoneCard {...milestone} onEditMilestone={mockOnEditMilestone} />
+      <MilestoneCard
+        {...milestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
     );
     expect(screen.getByText("Due: 2025-01-01")).toBeInTheDocument();
   });
@@ -228,6 +245,7 @@ describe("MilestoneCard", () => {
       <MilestoneCard
         {...pendingMilestone}
         onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
       />
     );
 
@@ -235,10 +253,171 @@ describe("MilestoneCard", () => {
 
     // Focus the button using keyboard navigation
     await user.tab();
+    // Skip the toggle button and focus on edit button
+    await user.tab();
     expect(editButton).toHaveFocus();
 
     // Activate button with Enter key
     await user.keyboard("{Enter}");
     expect(mockOnEditMilestone).toHaveBeenCalledTimes(1);
+  });
+
+  // Tests for toggle status functionality
+  it("renders toggle status button with correct accessibility label", () => {
+    render(
+      <MilestoneCard
+        {...pendingMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    expect(toggleButton).toBeInTheDocument();
+    expect(toggleButton).toHaveAttribute("type", "button");
+  });
+
+  it("shows CheckCircle icon for pending milestone", () => {
+    render(
+      <MilestoneCard
+        {...pendingMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    // CheckCircle icon should be present for pending milestones
+    const icon = toggleButton.querySelector("svg");
+    expect(icon).toBeInTheDocument();
+  });
+
+  it("shows Circle icon for completed milestone", () => {
+    render(
+      <MilestoneCard
+        {...completedMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    // Circle icon should be present for completed milestones
+    const icon = toggleButton.querySelector("svg");
+    expect(icon).toBeInTheDocument();
+  });
+
+  it("calls onToggleStatus with correct parameters when toggling pending to completed", () => {
+    render(
+      <MilestoneCard
+        {...pendingMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    fireEvent.click(toggleButton);
+
+    expect(mockOnToggleStatus).toHaveBeenCalledTimes(1);
+    expect(mockOnToggleStatus).toHaveBeenCalledWith("1", "Completed");
+  });
+
+  it("calls onToggleStatus with correct parameters when toggling completed to pending", () => {
+    render(
+      <MilestoneCard
+        {...completedMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    fireEvent.click(toggleButton);
+
+    expect(mockOnToggleStatus).toHaveBeenCalledTimes(1);
+    expect(mockOnToggleStatus).toHaveBeenCalledWith("2", "Pending");
+  });
+
+  it("calls onToggleStatus with user event", async () => {
+    const user = userEvent.setup();
+    render(
+      <MilestoneCard
+        {...pendingMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    await user.click(toggleButton);
+
+    expect(mockOnToggleStatus).toHaveBeenCalledTimes(1);
+    expect(mockOnToggleStatus).toHaveBeenCalledWith("1", "Completed");
+  });
+
+  it("toggle button has correct hover classes", () => {
+    render(
+      <MilestoneCard
+        {...pendingMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    expect(toggleButton).toHaveClass(
+      "p-1",
+      "rounded-full",
+      "text-gray-500",
+      "hover:text-green-600",
+      "hover:bg-gray-100",
+      "transition",
+      "cursor-pointer"
+    );
+  });
+
+  it("ensures toggle button is keyboard accessible", async () => {
+    const user = userEvent.setup();
+    render(
+      <MilestoneCard
+        {...pendingMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+
+    // Focus the toggle button using keyboard navigation
+    await user.tab();
+    expect(toggleButton).toHaveFocus();
+
+    // Activate button with Enter key
+    await user.keyboard("{Enter}");
+    expect(mockOnToggleStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders both toggle and edit buttons correctly", () => {
+    render(
+      <MilestoneCard
+        {...pendingMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    expect(
+      screen.getByLabelText("Toggle milestone status")
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Edit milestone")).toBeInTheDocument();
+
+    // Both buttons should be in the same container
+    const buttonContainer = screen.getByLabelText(
+      "Toggle milestone status"
+    ).parentElement;
+    expect(buttonContainer).toContainElement(
+      screen.getByLabelText("Edit milestone")
+    );
   });
 });

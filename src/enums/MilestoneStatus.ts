@@ -1,8 +1,8 @@
 const MilestoneStatus = {
   Pending: "Pending",
   Completed: "Completed",
+  Overdue: "Overdue",
 };
 
-// infer type as "Pending" | "Completed"
 export type MilestoneStatus =
   (typeof MilestoneStatus)[keyof typeof MilestoneStatus];

@@ -28,7 +28,7 @@ export default function UpsertMilestoneModal({
 
   async function onSubmit(values: { title: string; dueDate: string }) {
     await upsertMilestone({
-      id: selectedMilestone ? selectedMilestone.id : 0,
+      id: selectedMilestone?.id,
       title: values.title,
       dueDate: values.dueDate,
       status: selectedMilestone ? selectedMilestone.status : "Pending",
