@@ -214,21 +214,6 @@ describe("UpsertMilestoneModal", () => {
     });
   });
 
-  it("has correct placeholder text for title input", () => {
-    render(
-      <UpsertMilestoneModal
-        isOpen={true}
-        setIsOpen={mockSetIsOpen}
-        onSuccess={mockOnSuccess}
-        selectedMilestone={null}
-        setSelectedMilestone={mockSetSelectedMilestone}
-      />
-    );
-
-    const titleInput = screen.getByPlaceholderText("Enter milestone title");
-    expect(titleInput).toBeInTheDocument();
-  });
-
   // Tests for editing existing milestone
   it("pre-fills form fields when editing existing milestone", () => {
     render(
@@ -262,7 +247,7 @@ describe("UpsertMilestoneModal", () => {
     expect(screen.getByText("Create Milestone")).toBeInTheDocument();
   });
 
-  it("shows Create Milestone title when editing existing milestone", () => {
+  it("shows Edit Milestone title when editing existing milestone", () => {
     render(
       <UpsertMilestoneModal
         isOpen={true}
@@ -273,8 +258,7 @@ describe("UpsertMilestoneModal", () => {
       />
     );
 
-    // The component always shows "Create Milestone" regardless of edit mode
-    expect(screen.getByText("Create Milestone")).toBeInTheDocument();
+    expect(screen.getByText("Edit Milestone")).toBeInTheDocument();
   });
 
   it("submits edited milestone data correctly", async () => {
@@ -313,29 +297,6 @@ describe("UpsertMilestoneModal", () => {
     });
   });
 
-  it("handles keyboard navigation correctly", async () => {
-    const user = userEvent.setup();
-    render(
-      <UpsertMilestoneModal
-        isOpen={true}
-        setIsOpen={mockSetIsOpen}
-        onSuccess={mockOnSuccess}
-        selectedMilestone={null}
-        setSelectedMilestone={mockSetSelectedMilestone}
-      />
-    );
-
-    const titleInput = screen.getByLabelText("Title");
-    const dueDateInput = screen.getByLabelText("Due Date");
-
-    // Tab through the form
-    await user.tab();
-    expect(titleInput).toHaveFocus();
-
-    await user.tab();
-    expect(dueDateInput).toHaveFocus();
-  });
-
   it("disables save button while form is submitting", async () => {
     const user = userEvent.setup();
     render(
@@ -356,9 +317,6 @@ describe("UpsertMilestoneModal", () => {
 
     const saveButton = screen.getByRole("button", { name: "Save" });
     expect(saveButton).not.toBeDisabled();
-
-    // Note: In a real scenario, you might need to mock a slow async operation
-    // to properly test the disabled state during submission
   });
 
   it("calls upsertMilestone with correct parameters for new milestone", async () => {

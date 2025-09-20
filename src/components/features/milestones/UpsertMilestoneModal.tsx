@@ -45,7 +45,9 @@ export default function UpsertMilestoneModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Create Milestone</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          {selectedMilestone ? "Edit Milestone" : "Create Milestone"}
+        </h2>
 
         <Formik
           initialValues={{
