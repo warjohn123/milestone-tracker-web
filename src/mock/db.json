@@ -1,10 +1,10 @@
 {
-  "milestones": [
-    {
-      "id": "3214",
-      "title": "New milestone 1",
-      "dueDate": "2025-09-13",
-      "status": "Pending"
-    }
-  ]
+    "milestones": [
+        {
+            "id": "3214",
+            "title": "New milestone 1",
+            "dueDate": "2025-09-13",
+            "status": "Pending"
+        }
+    ]
 }
