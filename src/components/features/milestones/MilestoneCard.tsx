@@ -32,9 +32,11 @@ export default function MilestoneCard({
 
   return (
     <div className="w-full max-w-md rounded-xl shadow-md border border-gray-200 p-4 bg-white flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-        <div className="flex items-center gap-2">
+      <div className="flex items-start justify-between">
+        <h3 className="text-lg font-semibold text-gray-800 break-all">
+          {title}
+        </h3>
+        <div className="flex gap-2">
           <button
             type="button"
             className="p-1 rounded-full text-gray-500 hover:text-green-600 hover:bg-gray-100 transition cursor-pointer"
