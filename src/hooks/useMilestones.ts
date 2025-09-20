@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
 import type { IMilestone } from "../@types/Milestone";
 
-const API_URL = "http://localhost:8000";
-
 export function useMilestones() {
   const [milestones, setMilestones] = useState<IMilestone[]>([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +9,7 @@ export function useMilestones() {
   const fetchMilestones = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/milestones`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/milestones`);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
       const data = await res.json();
       console.log("data", data);
@@ -28,8 +26,8 @@ export function useMilestones() {
   async function upsertMilestone(milestone: IMilestone) {
     const isUpdate = !!milestone.id;
     const url = isUpdate
-      ? `${API_URL}/milestones/${milestone.id}`
-      : `${API_URL}/milestones`;
+      ? `${import.meta.env.VITE_API_URL}/milestones/${milestone.id}`
+      : `${import.meta.env.VITE_API_URL}/milestones`;
     const method = isUpdate ? "PUT" : "POST";
 
     console.log("milestone", milestone);
