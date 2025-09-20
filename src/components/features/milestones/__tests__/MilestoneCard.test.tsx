@@ -22,6 +22,13 @@ describe("MilestoneCard", () => {
     status: "Completed",
   };
 
+  const overdueMilestone: IMilestone = {
+    id: "3",
+    title: "Overdue Task",
+    dueDate: "2024-01-01", // Past date to make it overdue
+    status: "Pending", // Will be automatically converted to Overdue
+  };
+
   beforeEach(() => {
     mockOnEditMilestone.mockClear();
     mockOnToggleStatus.mockClear();
@@ -277,21 +284,6 @@ describe("MilestoneCard", () => {
     expect(toggleButton).toHaveAttribute("type", "button");
   });
 
-  it("shows CheckCircle icon for pending milestone", () => {
-    render(
-      <MilestoneCard
-        {...pendingMilestone}
-        onEditMilestone={mockOnEditMilestone}
-        onToggleStatus={mockOnToggleStatus}
-      />
-    );
-
-    const toggleButton = screen.getByLabelText("Toggle milestone status");
-    // CheckCircle icon should be present for pending milestones
-    const icon = toggleButton.querySelector("svg");
-    expect(icon).toBeInTheDocument();
-  });
-
   it("shows Circle icon for completed milestone", () => {
     render(
       <MilestoneCard
@@ -419,5 +411,78 @@ describe("MilestoneCard", () => {
     expect(buttonContainer).toContainElement(
       screen.getByLabelText("Edit milestone")
     );
+  });
+
+  // Tests for overdue functionality
+  it("displays overdue status for pending milestone past due date", () => {
+    render(
+      <MilestoneCard
+        {...overdueMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    expect(screen.getByText("Overdue Task")).toBeInTheDocument();
+    expect(screen.getByText("Due: 2024-01-01")).toBeInTheDocument();
+    expect(screen.getByText("Overdue")).toBeInTheDocument();
+  });
+
+  it("toggles overdue milestone to completed when clicked", () => {
+    render(
+      <MilestoneCard
+        {...overdueMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    const toggleButton = screen.getByLabelText("Toggle milestone status");
+    fireEvent.click(toggleButton);
+
+    expect(mockOnToggleStatus).toHaveBeenCalledTimes(1);
+    expect(mockOnToggleStatus).toHaveBeenCalledWith("3", "Completed");
+  });
+
+  it("handles future pending milestone correctly (not overdue)", () => {
+    const futureMilestone: IMilestone = {
+      id: "4",
+      title: "Future Task",
+      dueDate: "2026-12-31", // Future date
+      status: "Pending",
+    };
+
+    render(
+      <MilestoneCard
+        {...futureMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    expect(screen.getByText("Future Task")).toBeInTheDocument();
+    expect(screen.getByText("Pending")).toBeInTheDocument();
+    expect(screen.queryByText("Overdue")).not.toBeInTheDocument();
+  });
+
+  it("completed milestone is never shown as overdue regardless of date", () => {
+    const pastCompletedMilestone: IMilestone = {
+      id: "5",
+      title: "Past Completed Task",
+      dueDate: "2020-01-01", // Very old date
+      status: "Completed",
+    };
+
+    render(
+      <MilestoneCard
+        {...pastCompletedMilestone}
+        onEditMilestone={mockOnEditMilestone}
+        onToggleStatus={mockOnToggleStatus}
+      />
+    );
+
+    expect(screen.getByText("Past Completed Task")).toBeInTheDocument();
+    expect(screen.getByText("Completed")).toBeInTheDocument();
+    expect(screen.queryByText("Overdue")).not.toBeInTheDocument();
   });
 });

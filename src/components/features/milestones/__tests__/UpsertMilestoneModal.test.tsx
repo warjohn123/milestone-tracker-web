@@ -373,4 +373,46 @@ describe("UpsertMilestoneModal", () => {
       });
     });
   });
+
+  it("preserves overdue status when editing overdue milestone", async () => {
+    const user = userEvent.setup();
+    const overdueMilestone: IMilestone = {
+      id: "4",
+      title: "Overdue Task",
+      dueDate: "2024-01-01",
+      status: "Overdue",
+    };
+
+    render(
+      <UpsertMilestoneModal
+        isOpen={true}
+        selectedMilestone={overdueMilestone}
+        setIsOpen={mockSetIsOpen}
+        onSuccess={mockOnSuccess}
+        setSelectedMilestone={mockSetSelectedMilestone}
+      />
+    );
+
+    // Verify the form is pre-filled with overdue milestone data
+    expect(screen.getByDisplayValue("Overdue Task")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("2024-01-01")).toBeInTheDocument();
+    expect(screen.getByText("Edit Milestone")).toBeInTheDocument();
+
+    // Make a small change and submit
+    const titleInput = screen.getByDisplayValue("Overdue Task");
+    await user.clear(titleInput);
+    await user.type(titleInput, "Updated Overdue Task");
+
+    const saveButton = screen.getByRole("button", { name: "Save" });
+    await user.click(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpsertMilestone).toHaveBeenCalledWith({
+        id: "4",
+        title: "Updated Overdue Task",
+        dueDate: "2024-01-01",
+        status: "Overdue", // Should preserve overdue status
+      });
+    });
+  });
 });
