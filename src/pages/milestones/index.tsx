@@ -2,40 +2,10 @@ import { useState } from "react";
 import type { IMilestone } from "../../@types/Milestone";
 import MilestoneCard from "../../components/features/milestones/MilestoneCard";
 import UpsertMilestoneModal from "../../components/features/milestones/UpsertMilestoneModal";
+import { useMilestones } from "../../hooks/useMilestones";
 
 export default function MilestonesPage() {
-  const milestones: IMilestone[] = [
-    {
-      id: "1",
-      title: "Launch Website",
-      dueDate: "2023-10-15",
-      status: "Completed",
-    },
-    {
-      id: "2",
-      title: "Eat Pizza",
-      dueDate: "2023-10-15",
-      status: "Completed",
-    },
-    {
-      id: "3",
-      title: "Drink Coke",
-      dueDate: "2023-10-15",
-      status: "Completed",
-    },
-    {
-      id: "4",
-      title: "Drink Coke",
-      dueDate: "2023-10-15",
-      status: "Completed",
-    },
-    {
-      id: "5",
-      title: "Drink Coke",
-      dueDate: "2023-10-15",
-      status: "Completed",
-    },
-  ];
+  const { milestones, loading, error } = useMilestones();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedMilestone, setSelectedMilestone] = useState<IMilestone | null>(
@@ -49,6 +19,14 @@ export default function MilestonesPage() {
   function onEditMilestone(milestone: IMilestone) {
     setSelectedMilestone(milestone);
     setIsModalOpen(true);
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">Error: {error}</div>;
   }
 
   return (

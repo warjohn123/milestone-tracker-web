@@ -8,7 +8,7 @@ describe("UpsertMilestoneModal", () => {
   const mockHandleClose = vi.fn();
 
   const sampleMilestone: IMilestone = {
-    id: "1",
+    id: 1,
     title: "Test Milestone",
     dueDate: "2025-12-31",
     status: "Pending",

@@ -8,14 +8,14 @@ describe("MilestoneCard", () => {
   const mockOnEditMilestone = vi.fn();
 
   const pendingMilestone: IMilestone = {
-    id: "1",
+    id: 1,
     title: "Test Milestone",
     dueDate: "2025-09-30",
     status: "Pending",
   };
 
   const completedMilestone: IMilestone = {
-    id: "2",
+    id: 2,
     title: "Completed Task",
     dueDate: "2025-08-15",
     status: "Completed",
@@ -190,7 +190,7 @@ describe("MilestoneCard", () => {
 
   it("renders with long title without breaking layout", () => {
     const longTitleMilestone: IMilestone = {
-      id: "3",
+      id: 3,
       title:
         "This is a very long milestone title that should still render properly without breaking the card layout",
       dueDate: "2025-12-25",
@@ -210,7 +210,7 @@ describe("MilestoneCard", () => {
 
   it("handles different date formats correctly", () => {
     const milestone: IMilestone = {
-      id: "4",
+      id: 4,
       title: "Date Test",
       dueDate: "2025-01-01",
       status: "Completed",

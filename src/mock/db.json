@@ -1,0 +1,16 @@
+{
+    "milestones": [
+        {
+            "id": 1,
+            "title": "First milestone",
+            "dueDate": "2025-09-30",
+            "status": "Pending"
+        },
+        {
+            "id": 2,
+            "title": "Second milestone",
+            "dueDate": "2025-10-10",
+            "status": "Completed"
+        }
+    ]
+}
