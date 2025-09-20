@@ -1,27 +1,9 @@
 {
   "milestones": [
     {
-      "id": "1",
-      "title": "Completed milestone",
-      "dueDate": "2025-09-19",
-      "status": "Pending"
-    },
-    {
-      "id": "2",
-      "title": "Test milestone",
-      "dueDate": "2025-10-10",
-      "status": "Pending"
-    },
-    {
-      "id": "d9ab",
-      "title": "Testing",
-      "dueDate": "2025-09-27",
-      "status": "Completed"
-    },
-    {
-      "id": "8cea",
-      "title": "Testing",
-      "dueDate": "2025-09-25",
+      "id": "3214",
+      "title": "New milestone 1",
+      "dueDate": "2025-09-20",
       "status": "Pending"
     }
   ]

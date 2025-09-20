@@ -18,10 +18,12 @@ export default function MilestoneCard({
 
   const now = new Date();
   const due = new Date(dueDate);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
 
   const milestoneStatus = (): MilestoneStatus => {
     let effectiveStatus: MilestoneStatus = status;
-    if (status === "Pending" && due < now) {
+    if (status === "Pending" && dueDay < today) {
       effectiveStatus = "Overdue";
     }
 
