@@ -3,7 +3,6 @@ import { ToastContainer } from "react-toastify";
 import MilestonesPage from "./pages/milestones";
 
 function App() {
-
   return (
     <Router>
       <Routes>
@@ -11,7 +10,7 @@ function App() {
       </Routes>
       <ToastContainer />
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
