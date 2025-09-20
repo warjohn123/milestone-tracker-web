@@ -38,9 +38,17 @@ export default function MilestonesPage() {
   ];
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedMilestone, setSelectedMilestone] = useState<IMilestone | null>(
+    null
+  );
 
   function handleClose() {
     setIsModalOpen(false);
+  }
+
+  function onEditMilestone(milestone: IMilestone) {
+    setSelectedMilestone(milestone);
+    setIsModalOpen(true);
   }
 
   return (
@@ -56,7 +64,11 @@ export default function MilestonesPage() {
         </button>
       </div>
 
-      <UpsertMilestoneModal handleClose={handleClose} isOpen={isModalOpen} />
+      <UpsertMilestoneModal
+        handleClose={handleClose}
+        isOpen={isModalOpen}
+        selectedMilestone={selectedMilestone}
+      />
 
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-3 lg:grid-cols-4">
         {milestones.map((m, index) => (
@@ -66,6 +78,7 @@ export default function MilestonesPage() {
             title={m.title}
             dueDate={m.dueDate}
             status={m.status}
+            onEditMilestone={onEditMilestone}
           />
         ))}
       </div>

@@ -1,8 +1,10 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import type { IMilestone } from "../../../@types/Milestone";
 
 interface Props {
   isOpen: boolean;
+  selectedMilestone: IMilestone | null;
   handleClose: () => void;
 }
 
@@ -11,7 +13,11 @@ const MilestoneSchema = Yup.object().shape({
   dueDate: Yup.date().required("Due date is required"),
 });
 
-export default function UpsertMilestoneModal({ isOpen, handleClose }: Props) {
+export default function UpsertMilestoneModal({
+  isOpen,
+  handleClose,
+  selectedMilestone,
+}: Props) {
   if (!isOpen) return null;
 
   function onSubmit(values: { title: string; dueDate: string }) {
@@ -27,7 +33,10 @@ export default function UpsertMilestoneModal({ isOpen, handleClose }: Props) {
         <h2 className="text-xl font-semibold mb-4">Create Milestone</h2>
 
         <Formik
-          initialValues={{ title: "", dueDate: "" }}
+          initialValues={{
+            title: selectedMilestone?.title || "",
+            dueDate: selectedMilestone?.dueDate || "",
+          }}
           validationSchema={MilestoneSchema}
           onSubmit={(values, { resetForm }) => {
             onSubmit(values);
