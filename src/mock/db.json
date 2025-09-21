@@ -2,15 +2,15 @@
   "milestones": [
     {
       "id": "3214",
-      "title": "New milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrhNew milestone 1erhershrshhy34wy34wy34y3q errrhrh",
+      "title": "Milestone 1",
       "dueDate": "2025-09-13",
       "status": "Pending"
     },
     {
       "id": "ec07",
-      "title": "waegweagewagewahyweahyaewhyeryreyserthydrtjdtryjutydutrywataewtewataewtaweteawteawtaewtewatewatwetew",
+      "title": "Milestone 2",
       "dueDate": "2025-09-19",
-      "status": "Pending"
+      "status": "Completed"
     }
   ]
 }
