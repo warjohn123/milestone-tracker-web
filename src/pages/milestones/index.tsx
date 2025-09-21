@@ -4,6 +4,7 @@ import MilestoneCard from "../../components/features/milestones/MilestoneCard";
 import UpsertMilestoneModal from "../../components/features/milestones/UpsertMilestoneModal";
 import { useMilestones } from "../../hooks/useMilestones";
 import type { MilestoneStatus } from "../../enums/MilestoneStatus";
+import EmptyListPlaceholder from "../../components/features/milestones/EmptyPlaceholder";
 
 export default function MilestonesPage() {
   const { milestones, loading, error, fetchMilestones, upsertMilestone } =
@@ -65,19 +66,23 @@ export default function MilestonesPage() {
         setSelectedMilestone={setSelectedMilestone}
       />
 
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-3 lg:grid-cols-4">
-        {milestones.map((m, index) => (
-          <MilestoneCard
-            id={m.id!}
-            key={index}
-            title={m.title}
-            dueDate={m.dueDate}
-            status={m.status}
-            onToggleStatus={onToggleStatus}
-            onEditMilestone={onEditMilestone}
-          />
-        ))}
-      </div>
+      {milestones.length === 0 ? (
+        <EmptyListPlaceholder />
+      ) : (
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-3 lg:grid-cols-4">
+          {milestones.map((m, index) => (
+            <MilestoneCard
+              id={m.id!}
+              key={index}
+              title={m.title}
+              dueDate={m.dueDate}
+              status={m.status}
+              onToggleStatus={onToggleStatus}
+              onEditMilestone={onEditMilestone}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

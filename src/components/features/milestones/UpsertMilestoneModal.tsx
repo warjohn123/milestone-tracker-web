@@ -12,7 +12,9 @@ interface Props {
 }
 
 const MilestoneSchema = Yup.object().shape({
-  title: Yup.string().required("Title is required"),
+  title: Yup.string()
+    .required("Title is required")
+    .max(100, "Title is too long"),
   dueDate: Yup.date().required("Due date is required"),
 });
 
@@ -74,7 +76,6 @@ export default function UpsertMilestoneModal({
                   id="title"
                   name="title"
                   type="text"
-                  maxlength="100"
                   placeholder="Enter milestone title"
                   className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm sm:text-sm p-3"
                 />

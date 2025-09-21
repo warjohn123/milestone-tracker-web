@@ -30,7 +30,7 @@ describe("UpsertMilestoneModal", () => {
     mockSetSelectedMilestone.mockClear();
     mockUpsertMilestone.mockClear();
     mockUpsertMilestone.mockResolvedValue({
-      id: 1,
+      id: "1",
       title: "Test",
       dueDate: "2025-12-31",
       status: "Pending",

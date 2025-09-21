@@ -2,6 +2,7 @@ import type { IMilestone } from "../../../@types/Milestone";
 import { Pencil, CheckCircle, Circle } from "lucide-react";
 import type { MilestoneStatus } from "../../../enums/MilestoneStatus";
 import MilestoneStatusBadge from "./MilestoneStatusBadge";
+import { computeMilestoneStatus } from "../../../utils/getMilestoneStatus";
 
 export default function MilestoneCard({
   id,
@@ -15,20 +16,6 @@ export default function MilestoneCard({
   onToggleStatus: (id: string, newStatus: MilestoneStatus) => void;
 }) {
   const isCompleted = status === "Completed";
-
-  const now = new Date();
-  const due = new Date(dueDate);
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
-
-  const milestoneStatus = (): MilestoneStatus => {
-    let effectiveStatus: MilestoneStatus = status;
-    if (status === "Pending" && dueDay < today) {
-      effectiveStatus = "Overdue";
-    }
-
-    return effectiveStatus;
-  };
 
   return (
     <div className="w-full max-w-md rounded-xl shadow-md border border-gray-200 p-4 bg-white flex flex-col gap-2">
@@ -63,7 +50,7 @@ export default function MilestoneCard({
       </div>
       <p className="text-sm text-gray-500">Due: {dueDate}</p>
 
-      <MilestoneStatusBadge status={milestoneStatus()} />
+      <MilestoneStatusBadge status={computeMilestoneStatus(status, dueDate)} />
     </div>
   );
 }
